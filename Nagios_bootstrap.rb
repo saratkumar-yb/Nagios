@@ -26,17 +26,20 @@ ip = "192.168.0.50"
 begin
     ssh = Net::SSH.start(@hostname, @username, :password => @password)
     stdout = ""
-    stdout = ssh.exec!("wget -qO-  https://raw.githubusercontent.com/kumarsarath588/Nagios/master/get-destros.sh | bash")
+    #stdout = ssh.exec!("wget -qO-  https://raw.githubusercontent.com/kumarsarath588/Nagios/master/get-destros.sh | bash")
+    stdout = ssh.exec!("curl -s https://raw.githubusercontent.com/kumarsarath588/Nagios/master/get-destros.sh | bash")
     stdout = stdout.chomp
     pass = @password
     case stdout
  	when "redhat"
 	   if(defined?($sudo))
-	 	ssh.exec!("echo #{pass} | sudo -S yum install -y nagios-plugins.x86_64 nrpe.x86_64 nagios-plugins-nrpe.x86_64")
+		ssh.exec!("echo #{pass} | sudo -S yum install -y epel-release")
+	 	ssh.exec!("echo #{pass} | sudo -S yum install -y nagios-plugins-all.x86_64 nrpe.x86_64 nagios-plugins-nrpe.x86_64")
                 ssh.exec!("echo #{pass} | sudo -S sed -i '/allowed_hosts/ s/$/,#{ip}/g' /etc/nagios/nrpe.cfg")
                 ssh.exec!("echo #{pass} | sudo -S /etc/init.d/nrpe restart")
 	   else	
-		ssh.exec!("yum install -y nagios-plugins.x86_64 nrpe.x86_64 nagios-plugins-nrpe.x86_64")
+		ssh.exec!("yum install -y epel-release")
+		ssh.exec!("yum install -y nagios-plugins-all.x86_64 nrpe.x86_64 nagios-plugins-nrpe.x86_64")
 		ssh.exec!("sed -i '/allowed_hosts/ s/$/,#{ip}/g' /etc/nagios/nrpe.cfg")
 		ssh.exec!("/etc/init.d/nrpe restart")
 	   end
