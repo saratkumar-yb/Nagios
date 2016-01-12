@@ -41,7 +41,7 @@ begin
 		ssh.exec!("yum install -y epel-release")
 		ssh.exec!("yum install -y nagios-plugins-all.x86_64 nrpe.x86_64 nagios-plugins-nrpe.x86_64")
 		ssh.exec!("sed -i '/allowed_hosts/ s/$/,#{ip}/g' /etc/nagios/nrpe.cfg")
-		ssh.exec!("/etc/init.d/nrpe restart")
+		ssh.exec!("/etc/init.d/nagios-nrpe-server restart")
 	   end
   	when "debian"
 	   if(defined?($sudo))
@@ -53,7 +53,7 @@ begin
 		ssh.exec!("apt-get update")
 		ssh.exec!("apt-get install -y nagios-nrpe-server nagios-plugins")
 		ssh.exec!("sed -i '/allowed_hosts/ s/$/,#{ip}/g' /etc/nagios/nrpe.cfg")
-		ssh.exec!("/etc/init.d/nrpe restart")
+		ssh.exec!("/etc/init.d/nagios-nrpe-server restart")
 	   end
     end
     puts ":#{stdout}:"
